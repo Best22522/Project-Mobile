@@ -60,83 +60,107 @@ Future<bool> emailExists(String email) async {
 }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.lightBlueAccent,
-      appBar: AppBar(
-        backgroundColor: Colors.lightBlueAccent,
-        title: Text(
-          'สมัครใช้งาน',
-          style: TextStyle(color: Colors.white),
+Widget build(BuildContext context) {
+  return Stack(
+    children: [
+      // Background gradient (under everything)
+      Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.lightBlueAccent, Colors.blueAccent],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
-        elevation: 0,
       ),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 60.0, left: 30.0, right: 30.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SizedBox(height: 20),
-                  Text(
-                    'HIGHLIGHT',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  _buildInputField(Icons.email, 'อีเมล', emailController, validateEmail),
-                  SizedBox(height: 20),
-                  _buildPasswordInputField(
-                    icon: Icons.lock,
-                    hint: 'รหัสผ่าน',
-                    controller: passwordController,
-                    isPassword: true,
-                  ),
-                  SizedBox(height: 20),
-                  _buildPasswordInputField(
-                    icon: Icons.lock,
-                    hint: 'ยืนยันรหัสผ่าน',
-                    controller: confirmPasswordController,
-                    isConfirmPassword: true,
-                  ),
-                  if (errorMessage.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0, right: 100.0),
-                      child: Text(
-                        errorMessage,
-                        style: TextStyle(color: Colors.red, fontSize: 14),
+
+      Scaffold(
+        backgroundColor: Colors.transparent, // Transparent to let background show
+        appBar: AppBar(
+          elevation: 0,
+          flexibleSpace: Container(
+          decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.lightBlueAccent, Colors.blueAccent],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+          ),
+        ),
+      ),
+          title: Text(
+            'สมัครใช้งาน',
+            style: TextStyle(color: const Color.fromARGB(255, 255, 255, 255)),
+          ),
+        ),
+        body: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: SingleChildScrollView(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 60.0, left: 30.0, right: 30.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 20),
+                    Text(
+                      'HIGHLIGHT',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
                       ),
                     ),
-                  SizedBox(height: 20),
-                  SizedBox(
-                    width: 300,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: isEmailValid && doPasswordsMatch ? _checkEmailAndRegister : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.lightBlueAccent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                    SizedBox(height: 30),
+                    _buildInputField(Icons.email, 'อีเมล', emailController, validateEmail),
+                    SizedBox(height: 20),
+                    _buildPasswordInputField(
+                      icon: Icons.lock,
+                      hint: 'รหัสผ่าน',
+                      controller: passwordController,
+                      isPassword: true,
+                    ),
+                    SizedBox(height: 20),
+                    _buildPasswordInputField(
+                      icon: Icons.lock,
+                      hint: 'ยืนยันรหัสผ่าน',
+                      controller: confirmPasswordController,
+                      isConfirmPassword: true,
+                    ),
+                    if (errorMessage.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, right: 100.0),
+                        child: Text(
+                          errorMessage,
+                          style: TextStyle(color: Colors.red, fontSize: 14),
                         ),
                       ),
-                      child: Text('สมัครใช้งานฟรี'),
+                    SizedBox(height: 20),
+                    SizedBox(
+                      width: 300,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: isEmailValid && doPasswordsMatch ? _checkEmailAndRegister : null,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.lightBlueAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                        child: Text('สมัครใช้งานฟรี'),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
-    );
-  }
+    ],
+  );
+}
+
 
   Widget _buildInputField(IconData icon, String hint, TextEditingController controller, Function onChanged) {
     return SizedBox(

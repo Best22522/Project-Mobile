@@ -29,23 +29,27 @@ class FirstPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.lightBlueAccent,
+      body: Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [Colors.lightBlueAccent, Colors.blueAccent],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
       ),
-      backgroundColor: Colors.lightBlueAccent,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'HIGHLIGHT',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+    ),
+    child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'HIGHLIGHT',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
-            SizedBox(height: 20),
+          ),
+          SizedBox(height: 20),
             
             // Sign Up Button
             SizedBox(
@@ -91,6 +95,7 @@ class FirstPage extends StatelessWidget {
             SizedBox(height: 20),
           ],
         ),
+      ),
       ),
     );
   }

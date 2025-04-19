@@ -146,18 +146,34 @@ Future<void> _loadRememberedLogin() async {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.lightBlueAccent,
-      appBar: AppBar(
-        backgroundColor: Colors.lightBlueAccent,
-        title: Text(
-          'เข้าสู่ระบบ',
-          style: TextStyle(color: Colors.white),
+Widget build(BuildContext context) {
+  return Scaffold(
+    // Remove backgroundColor here to allow gradient to show
+    appBar: AppBar(
+      elevation: 0,
+      flexibleSpace: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.lightBlueAccent, Colors.blueAccent],
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+          ),
         ),
-        elevation: 0,
       ),
-      body: GestureDetector(
+      title: Text(
+        'เข้าสู่ระบบ',
+        style: TextStyle(color: Colors.white),
+      ),
+    ),
+    body: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.lightBlueAccent, Colors.blueAccent],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: Center(
           child: Padding(
@@ -273,6 +289,7 @@ Future<void> _loadRememberedLogin() async {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
