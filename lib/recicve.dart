@@ -82,6 +82,7 @@ class _RecicvePageState extends State<RecicvePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('ใบเสร็จรับเงิน'),
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
         backgroundColor: const Color.fromARGB(255, 22, 163, 86),
       ),
       drawer: Menu_Bar(
@@ -150,6 +151,7 @@ class _RecicvePageState extends State<RecicvePage> {
                                     notes: data['notes'] ?? '',
                                     discount: data['discount'] ?? 0,
                                     discountBaht: data['discountBaht'] ?? 0,
+                                    vat: data['VAT'] ?? 0,
                                     selectedProducts: List<Map<String, dynamic>>.from(data['selectedProducts'] ?? []),
                                     isInvoice: data['isInvoice'] ?? false, // Determine if it's an invoice
                                   ),

@@ -56,14 +56,14 @@ class _CombieGraphState extends State<CombieGraph> {
     return List.generate(daysInMonth, (index) => index + 1); // Generate days 1 to last day of the current month
   }
 
-Future<Map<int, double>> _fetchMonthlyCollection() async {
-  final QuerySnapshot recieveSnapshot = await FirebaseFirestore.instance
+Future<Map<String, Map<int, double>>> _fetchMonthlyCollection() async {
+  final recieveSnapshot = await FirebaseFirestore.instance
       .collection('users')
       .doc(widget.userId)
       .collection('recieve')
       .get();
-  
-  final QuerySnapshot paySnapshot = await FirebaseFirestore.instance
+
+  final paySnapshot = await FirebaseFirestore.instance
       .collection('users')
       .doc(widget.userId)
       .collection('pay')
@@ -71,77 +71,75 @@ Future<Map<int, double>> _fetchMonthlyCollection() async {
       .collection('transactions')
       .get();
 
-  Map<int, double> monthlyData = {};
-  double totalAmount = 0.0;
+  Map<int, double> recieveData = {};
+  Map<int, double> payData = {};
 
-  // Determine which months/days to show based on selectedMonths
   List<int> monthsToShow;
   if (selectedMonths == 12) {
     monthsToShow = List.generate(12, (index) => index);
   } else if (selectedMonths == 6) {
     monthsToShow = getMonthsToDisplay();
   } else if (selectedMonths == 1) {
-    monthsToShow = getDaysInCurrentMonth(); // Show days for the current month
+    monthsToShow = getDaysInCurrentMonth();
   } else if (selectedMonths == 3) {
-    monthsToShow = getNext3Months(); // Show current month + next 2 months
+    monthsToShow = getNext3Months();
   } else {
     monthsToShow = [];
   }
 
-  // Helper function to process a snapshot
-  void processSnapshot(QuerySnapshot snapshot, String collectionType) {
-    for (var doc in snapshot.docs) {
-      var data = doc.data() as Map<String, dynamic>;
-      Timestamp timestamp = data['timestamp'];  // Assuming the timestamp field exists
-      double amount = (data['totalAmount'] ?? 0).toDouble();
+  void processSnapshot(QuerySnapshot snapshot, Map<int, double> targetMap, String type) {
+  for (var doc in snapshot.docs) {
+    var data = doc.data() as Map<String, dynamic>;
+    Timestamp timestamp = data['timestamp'];
 
-      // Extract month, day, and year from timestamp
-      DateTime date = timestamp.toDate();
-      int monthIndex = date.month - 1;  // Get the month index (0 = January, 1 = February, etc.)
-      String year = DateFormat('yyyy').format(date);  // Year
+    double amount;
+    if (type == 'recieve') {
+      amount = (data['totalAmount'] ?? 0).toDouble();
+    } else if (type == 'pay') {
+      amount = double.tryParse(data['price']?.toString() ?? '0') ?? 0.0;
+    } else {
+      amount = 0.0;
+    }
 
-      // Check if the data belongs to the selected months
-      if (selectedMonths == 12 && year == DateFormat('yyyy').format(DateTime.now())) {
-        monthlyData[monthIndex] = (monthlyData[monthIndex] ?? 0) + amount;
-        totalAmount += amount;
-      } else if (selectedMonths == 1 &&
-        date.month == DateTime.now().month &&
-        date.year == DateTime.now().year) {
-        int dayOfMonth = date.day;
-        monthlyData[dayOfMonth] = (monthlyData[dayOfMonth] ?? 0) + amount;
-        totalAmount += amount;
-      } else if (monthsToShow.contains(monthIndex)) {
-        monthlyData[monthIndex] = (monthlyData[monthIndex] ?? 0) + amount;
-        totalAmount += amount;
-      }
+    DateTime date = timestamp.toDate();
+    int monthIndex = date.month - 1;
+    int dayOfMonth = date.day;
+    String year = DateFormat('yyyy').format(date);
+
+    int key = selectedMonths == 1 ? dayOfMonth : monthIndex;
+
+    if ((selectedMonths == 12 && year == DateFormat('yyyy').format(DateTime.now())) ||
+        (selectedMonths == 1 &&
+            date.month == DateTime.now().month &&
+            date.year == DateTime.now().year) ||
+        monthsToShow.contains(key)) {
+      targetMap[key] = (targetMap[key] ?? 0) + amount;
     }
   }
+}
 
-  // Process both 'recieve' and 'pay' snapshots
-  processSnapshot(recieveSnapshot, 'recieve');
-  processSnapshot(paySnapshot, 'pay');
 
-  // If 12 months are selected, ensure that all months are represented (Jan-Dec)
+  processSnapshot(recieveSnapshot, recieveData, 'recieve');
+  processSnapshot(paySnapshot, payData, 'pay');
+
+  // Ensure all expected entries exist
   if (selectedMonths == 12) {
-    Map<int, double> sortedMonthlyData = {};
     for (int i = 0; i < 12; i++) {
-      sortedMonthlyData[i] = monthlyData[i] ?? 0.0;  // Ensure every month has a value
+      recieveData[i] = recieveData[i] ?? 0.0;
+      payData[i] = payData[i] ?? 0.0;
     }
-    monthlyData = sortedMonthlyData;
   } else if (selectedMonths == 1) {
-    int daysInMonth = DateTime.now().day;
     int totalDays = DateTime(DateTime.now().year, DateTime.now().month + 1, 0).day;
-    Map<int, double> sortedDailyData = {};
     for (int i = 1; i <= totalDays; i++) {
-      sortedDailyData[i] = monthlyData[i] ?? 0.0;
+      recieveData[i] = recieveData[i] ?? 0.0;
+      payData[i] = payData[i] ?? 0.0;
     }
-    monthlyData = sortedDailyData;
   }
 
-  // Filter out months with zero data to avoid rendering them on the chart
-  monthlyData = Map.fromEntries(monthlyData.entries.where((entry) => entry.value > 0));
-
-  return monthlyData;
+  return {
+    'recieve': recieveData,
+    'pay': payData,
+  };
 }
 
   @override
@@ -184,7 +182,7 @@ Future<Map<int, double>> _fetchMonthlyCollection() async {
         ),
 
         Expanded(
-  child: FutureBuilder<Map<int, double>>(
+  child: FutureBuilder<Map<String, Map<int, double>>>(
     future: _fetchMonthlyCollection(),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -194,7 +192,8 @@ Future<Map<int, double>> _fetchMonthlyCollection() async {
         return Center(child: Text("ไม่มีข้อมูล", style: TextStyle(fontSize: 12)));
       }
 
-      final data = snapshot.data!;
+      final recieveData = snapshot.data!['recieve']!;
+      final payData = snapshot.data!['pay']!;
 
       final monthNames = [
         "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
@@ -211,27 +210,28 @@ Future<Map<int, double>> _fetchMonthlyCollection() async {
         monthsToDisplay = getDaysInCurrentMonth();
       }
 
-      // Sort the data based on months/days to display
       final sortedData = monthsToDisplay.map((index) {
-        final label = selectedMonths == 1
-          ? "$index" // Use the day of the month for selectedMonths == 1
-          : monthNames[index.clamp(0, 11)];
+  final label = selectedMonths == 1
+      ? "$index"
+      : monthNames[index.clamp(0, 11)];
 
-        final value = data[index] ?? 0.0;
-        return BarChartGroupData(
-          x: index,
-          barRods: [
-            BarChartRodData(toY: value, color: Colors.blue),
-            // Here you can add a second bar for the second dataset (pay or any other)
-            BarChartRodData(toY: value * 0.8, color: Colors.green),  // Example for the second data set
-          ],
-        );
-      }).toList();
+  final recieve = recieveData[index] ?? 0.0;
+  final pay = payData[index] ?? 0.0;
 
-      final totalAmount = monthsToDisplay.fold<double>(
-        0.0,
-        (sum, index) => sum + (data[index] ?? 0.0),
-      );
+  return BarChartGroupData(
+    x: index,
+    barRods: [
+      BarChartRodData(toY: recieve, color: Colors.blue, width: 7),
+      BarChartRodData(toY: pay, color: Colors.green, width: 7),
+    ],
+    barsSpace: 4,
+  );
+}).toList();
+
+
+      final totalRecieve = recieveData.values.fold(0.0, (sum, item) => sum + item);
+      final totalPay = payData.values.fold(0.0, (sum, item) => sum + item);
+
 
       return Column(
         children: [
@@ -308,8 +308,8 @@ Future<Map<int, double>> _fetchMonthlyCollection() async {
             child: Column(
               children: [
                 Text(
-                  "รายได้รวม: ${totalAmount.toStringAsFixed(2)} บาท",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                "รายรับรวม: ${totalRecieve.toStringAsFixed(2)} บาท | รายจ่ายรวม: ${totalPay.toStringAsFixed(2)} บาท",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],
             ),

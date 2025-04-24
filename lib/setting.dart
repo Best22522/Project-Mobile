@@ -112,6 +112,7 @@ void _editPersonalInfo() {
     return Scaffold(
       appBar: AppBar(
         title: Text('การตั้งค่า'),
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
         backgroundColor: const Color.fromARGB(255, 157, 123, 198),
       ),
       drawer: Menu_Bar(

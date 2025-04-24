@@ -80,6 +80,7 @@ class _PreviewPageState extends State<PreviewPage> {
         userId: widget.userId,
         discount: 0.00,
         discountBaht: 0.00,
+        vat: 0.00,
         companyName: widget.companyName, // Pass companyName
       );
     },
@@ -100,6 +101,7 @@ class _PreviewPageState extends State<PreviewPage> {
         quotation: quotation,  // Pass the quotation data to the form for editing
         discountBaht: quotation['discountBaht'] ?? 0.00,  // Pass the discount value in Baht
         discount: quotation['discount'] ?? 0.00,  // Pass the discount value
+        vat: quotation['VAT'] ?? 0.00, // Pass the VAT value
         companyName: widget.companyName,
       );
     },
@@ -127,6 +129,7 @@ void _deleteQuotation(String quotationId) async {
     return Scaffold(
       appBar: AppBar(
         title: Text('ใบเสนอราคา'),
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
         backgroundColor: Colors.blue,
         actions: [
           IconButton(
@@ -241,6 +244,7 @@ class _QuotationForm extends StatefulWidget {
   final double discount;  // Add the discount field here
   final double discountBaht; // Add the discount in Baht field here
   final String companyName;
+  final double vat; // Add the VAT field here
   
 
   const _QuotationForm({
@@ -249,6 +253,7 @@ class _QuotationForm extends StatefulWidget {
     this.quotation,
     required this.discount, 
     required this.discountBaht,  // Include discount in the constructor
+    required this.vat,
     required this.companyName,
   }) : super(key: key);
 
@@ -261,12 +266,14 @@ class _QuotationFormState extends State<_QuotationForm> {
   final TextEditingController _notesController = TextEditingController();
   final TextEditingController _customerNameController = TextEditingController();
   final TextEditingController _discountBahtController = TextEditingController();
+  final TextEditingController _vatController = TextEditingController();
 
   double totalAmount = 0.00;
   double discount = 0.00;  // This will hold the discount value
   String quotationNumber = "";
   double discountBaht = 0.00; // Total amount in Baht
   String _status = 'รออนุมัติ'; // Default status
+  double vat = 0.00; // VAT value
 
 
   List<Map<String, dynamic>> selectedProducts = []; // List of selected products
@@ -287,6 +294,8 @@ class _QuotationFormState extends State<_QuotationForm> {
       // Initialize the discount controller with the passed discount value
       discount = widget.discount;
       _discountController.text = discount.toStringAsFixed(2);  // Pre-fill the discount input field
+      vat = widget.vat;
+      _vatController.text = vat.toStringAsFixed(2); // Pre-fill the VAT input field
     } else {
       _generateQuotationNumber().then((value) {
         setState(() {
@@ -410,23 +419,24 @@ void _onCancel() {
   Navigator.pop(context); // Close the modal
 }
 
-  void _calculateTotal() {
-    setState(() {
-      discount = double.tryParse(_discountController.text) ?? 0.00;
-      totalAmount = selectedProducts.fold(0.0, (sum, product) {
-        return sum + (double.tryParse(product['amount'].toString()) ?? 0.00);
-      });
-      totalAmount = totalAmount - (totalAmount * discount / 100);
-    });
-  }
-
-void _calculateTotalbaht(){
+  void _recalculateTotal() {
   setState(() {
-    discountBaht = double.tryParse(_discountBahtController.text) ?? 0.00; // Store discountBaht correctly
-    totalAmount = selectedProducts.fold(0.0, (sum, product) {
+    // Parse values from controllers
+    discount = double.tryParse(_discountController.text) ?? 0.00;
+    discountBaht = double.tryParse(_discountBahtController.text) ?? 0.00;
+    vat = double.tryParse(_vatController.text) ?? 0.00;
+
+    // Calculate subtotal
+    double subtotal = selectedProducts.fold(0.0, (sum, product) {
       return sum + (double.tryParse(product['amount'].toString()) ?? 0.00);
     });
-    totalAmount = totalAmount - discountBaht;
+
+    // Apply discounts
+    double percentDiscountAmount = subtotal * discount / 100;
+    double afterDiscounts = subtotal - percentDiscountAmount - discountBaht;
+
+    // Apply VAT
+    totalAmount = afterDiscounts + (afterDiscounts * vat / 100);
   });
 }
 
@@ -446,6 +456,7 @@ void _calculateTotalbaht(){
         'notes': _notesController.text,
         'selectedProducts': selectedProducts,  // Save the selected products list
         'timestamp': FieldValue.serverTimestamp(),
+        'VAT': vat,
       });
 
       print("Quotation saved successfully!");
@@ -468,6 +479,7 @@ void _calculateTotalbaht(){
         notes: _notesController.text, // Pass notes
         discount: discount, // Pass the discount value
         discountBaht: discountBaht, // Pass the discount in Baht value
+        vat:vat,
       ),
     ),
   );
@@ -616,14 +628,21 @@ void _approveQuotation(String quotationId, Map<String, dynamic> quotationData) {
               controller: _discountBahtController,
               decoration: InputDecoration(labelText: "ส่วนลด (บาท)", border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
-              onChanged: (value) => _calculateTotalbaht(),
+              onChanged: (value) => _recalculateTotal(),
             ),
             Divider(),
             TextField(
               controller: _discountController,
               decoration: InputDecoration(labelText: "ส่วนลด (%)", border: OutlineInputBorder()),
               keyboardType: TextInputType.number,
-              onChanged: (value) => _calculateTotal(),
+              onChanged: (value) => _recalculateTotal(),
+            ),
+            Divider(),
+            TextField(
+              controller: _vatController,
+              decoration: InputDecoration(labelText: "ภาษีมูลค่าเพิ่ม (%)", border: OutlineInputBorder()),
+              keyboardType: TextInputType.number,
+              onChanged: (value) => _recalculateTotal(),
             ),
             Divider(),
             Row(

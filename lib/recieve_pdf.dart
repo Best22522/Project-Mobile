@@ -13,6 +13,7 @@ class PreviewDocumentPage extends StatelessWidget {
   final String notes;
   final double discount;
   final double discountBaht;
+  final double vat;
   final List<Map<String, dynamic>> selectedProducts;
   final bool isInvoice; // Flag to determine if it’s an invoice or quotation
 
@@ -26,6 +27,7 @@ class PreviewDocumentPage extends StatelessWidget {
     required this.discount,
     required this.discountBaht,
     required this.selectedProducts,
+    required this.vat,
     required this.isInvoice, // Add this flag
   }) : super(key: key);
 
@@ -156,9 +158,15 @@ class PreviewDocumentPage extends StatelessWidget {
                     style: pw.TextStyle(font: ttf)),
               ],
             ),
-
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.end,
+              children: [
+                pw.Text("ภาษีมูลค่าเพิ่ม (%): ${vat.toStringAsFixed(2)}%",
+                    style: pw.TextStyle(font: ttf)),
+              ],
+            ),
             pw.SizedBox(height: 10),
-
+            
             // Total Amount
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.end,

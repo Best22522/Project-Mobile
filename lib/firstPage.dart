@@ -57,7 +57,7 @@ class _FirstPageState extends State<FirstPage> {
       _taxIdController.text = data['taxId'] ?? '';
       _selectedRole = data['role'] ?? '';
       _selectedBusinessType = data['businessType'] ?? '';
-      _selectedVAT = data['VAT'] ?? '';
+      //_selectedVAT = data['VAT'] ?? '';
 
       setState(() {});
     }
@@ -143,14 +143,14 @@ class _FirstPageState extends State<FirstPage> {
             SizedBox(height: 24),
 
             // VAT Selection
-            _buildSectionTitle(Icons.add_card, 'จดภาษีมูลค่าเพิ่มหรือไม่'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                buildVATButton('จดภาษีมูลค่าเพิ่ม'),
-                buildVATButton('ไม่จดภาษีมูลค่าเพิ่ม'),
-              ],
-            ),
+            //_buildSectionTitle(Icons.add_card, 'จดภาษีมูลค่าเพิ่มหรือไม่'),
+            //Row(
+              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //children: [
+                //buildVATButton('จดภาษีมูลค่าเพิ่ม'),
+                //buildVATButton('ไม่จดภาษีมูลค่าเพิ่ม'),
+              //],
+            //),
 
             SizedBox(height: 24),
 
@@ -186,7 +186,7 @@ class _FirstPageState extends State<FirstPage> {
     'businessPhone': _businessPhoneController.text,
     'address': _addressController.text,
     'taxId': _taxIdController.text,
-    'VAT': _selectedVAT,
+    //'VAT': _selectedVAT,
   }).then((value) {
     // First, navigate to HomePage
     Navigator.pushReplacement(

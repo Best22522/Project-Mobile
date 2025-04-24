@@ -244,7 +244,8 @@ class _StorePageState extends State<StorePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('สินค้า'),
-        backgroundColor: const Color.fromARGB(255, 190, 158, 146),
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+        backgroundColor: const Color.fromARGB(255, 140, 93, 76),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add, color: Colors.white),  // "+" symbol icon

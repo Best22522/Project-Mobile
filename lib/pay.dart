@@ -316,7 +316,8 @@ void _deleteProduct(int index) async {
     return Scaffold(
       appBar: AppBar(
         title: Text('ค่าใช้จ่าย'),
-        backgroundColor: const Color.fromARGB(255, 235, 84, 134),
+        titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+        backgroundColor: const Color.fromARGB(255, 167, 53, 91),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add, color: Colors.white),  // "+" symbol icon

@@ -13,6 +13,7 @@ class PreviewQuotationPage extends StatelessWidget {
   final String notes;
   final double discount; // Add discount
   final double discountBaht; // Add discountBaht
+  final double vat;
   final List<Map<String, dynamic>> selectedProducts;
 
   const PreviewQuotationPage({
@@ -25,6 +26,7 @@ class PreviewQuotationPage extends StatelessWidget {
     required this.discount, // Add discount
     required this.discountBaht, // Add discountBaht
     required this.selectedProducts,
+    required this.vat,
   }) : super(key: key);
 
   Future<Uint8List> _generatePdf() async {
@@ -151,6 +153,13 @@ class PreviewQuotationPage extends StatelessWidget {
               mainAxisAlignment: pw.MainAxisAlignment.end,
               children: [
                 pw.Text("ส่วนลด (บาท): ฿${discountBaht.toStringAsFixed(2)}",
+                    style: pw.TextStyle(font: ttf)),
+              ],
+            ),
+                        pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.end,
+              children: [
+                pw.Text("ภาษีมูลค่าเพิ่ม (%): ${vat.toStringAsFixed(2)}%",
                     style: pw.TextStyle(font: ttf)),
               ],
             ),
