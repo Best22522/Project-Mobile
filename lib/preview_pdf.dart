@@ -11,8 +11,8 @@ class PreviewQuotationPage extends StatelessWidget {
   final String customerName;
   final double totalAmount;
   final String notes;
-  final double discount; // Add discount
-  final double discountBaht; // Add discountBaht
+  final double discount;
+  final double discountBaht;
   final double vat;
   final List<Map<String, dynamic>> selectedProducts;
 
@@ -23,8 +23,8 @@ class PreviewQuotationPage extends StatelessWidget {
     required this.customerName,
     required this.totalAmount,
     required this.notes,
-    required this.discount, // Add discount
-    required this.discountBaht, // Add discountBaht
+    required this.discount,
+    required this.discountBaht,
     required this.selectedProducts,
     required this.vat,
   }) : super(key: key);
@@ -236,7 +236,6 @@ pw.Row(
               // Generate the PDF
               final pdfBytes = await _generatePdf();
 
-              // Trigger file download with specific filename
               await Printing.sharePdf(
                 bytes: pdfBytes,
                 filename: "$quotationNumber-$customerName.pdf",

@@ -45,7 +45,7 @@ Future<void> _fetchCompanyName() async {
     print("Document exists: ${businessDoc.exists}");
 
     if (businessDoc.exists) {
-      print("Fetched Data: ${businessDoc.data()}"); // Print all data
+      print("Fetched Data: ${businessDoc.data()}");
       setState(() {
         companyName = businessDoc['companyName'] ?? 'Unknown Company';
       });
@@ -105,7 +105,7 @@ Future<void> _fetchCompanyName() async {
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    companyName ?? 'Loading...', // Show loading text if null
+                    companyName ?? 'Loading...',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 20,

@@ -5,11 +5,11 @@ import 'package:real/preview.dart';
 import 'package:real/recicve.dart';     
 import 'package:real/pay.dart';
 import 'package:real/setting.dart';
-import 'menu_bar.dart'; // Import Menu_Bar widget
+import 'menu_bar.dart';
 
 class StorePage extends StatefulWidget {
   final String companyName;
-  final String userId; // Ensure userId is included
+  final String userId;
 
   const StorePage({super.key, required this.companyName, required this.userId});
 
@@ -20,15 +20,12 @@ class StorePage extends StatefulWidget {
 class _StorePageState extends State<StorePage> {
   String currentPage = 'สินค้า'; // Default page to display
 
-  // Variables to hold form inputs
   final TextEditingController nameController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController stockController = TextEditingController();
 
-  // List to store products
   List<Map<String, dynamic>> products = [];
 
-  // Function to fetch products from Firestore
   Future<void> _fetchProducts() async {
     try {
       FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -36,9 +33,8 @@ class _StorePageState extends State<StorePage> {
           .collection('users')
           .doc(widget.userId)
           .collection('store')
-          .doc('userstore'); // Reference to user's store document
+          .doc('userstore');
 
-      // Fetch all products in the 'store' collection
       QuerySnapshot snapshot = await userDocRef.collection('products').get();
 
       setState(() {
@@ -57,7 +53,6 @@ class _StorePageState extends State<StorePage> {
     }
   }
 
-  // Function to save a new product to Firestore
   void _saveProduct() async {
     if (nameController.text.isNotEmpty && priceController.text.isNotEmpty && stockController.text.isNotEmpty) {
       try {
@@ -66,22 +61,18 @@ class _StorePageState extends State<StorePage> {
             .collection('users')
             .doc(widget.userId)
             .collection('store')
-            .doc('userstore'); // Reference to user's store document
+            .doc('userstore'); 
 
-        // Create subcollection inside 'userstore'
         CollectionReference productsCollection = userDocRef.collection('products');
 
-        // Add the new product
         await productsCollection.add({
           'name': nameController.text,
           'price': priceController.text,
           'stock': stockController.text,
         });
 
-        // Fetch products again to update the list
         _fetchProducts();
 
-        // Clear form fields
         nameController.clear();
         priceController.clear();
         stockController.clear();
@@ -89,12 +80,10 @@ class _StorePageState extends State<StorePage> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: ${e.toString()}')));
       }
     } else {
-      // Show an alert if any field is empty
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('กรุณากรอกให้ครบทุกช่อง')));
     }
   }
 
-  // Function to delete a product from Firestore
   void _deleteProduct(int index) async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     final product = products[index];
@@ -106,12 +95,9 @@ class _StorePageState extends State<StorePage> {
           .collection('store')
           .doc('userstore')
           .collection('products')
-          .doc(product['id']); // Get the document reference by id
-
-      // Delete the product from Firestore
+          .doc(product['id']); 
       await productRef.delete();
 
-      // Fetch products again to update the list
       _fetchProducts();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('เกิดข้อผิดพลาด: ${e.toString()}')));
@@ -125,7 +111,6 @@ class _StorePageState extends State<StorePage> {
     priceController.text = product['price']!;
     stockController.text = product['stock']!;
 
-    // Show dialog to edit product
     showDialog(
       context: context,
       builder: (context) {
@@ -162,26 +147,22 @@ class _StorePageState extends State<StorePage> {
               onPressed: () async {
                 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-                // Reference to the product document
                 DocumentReference productRef = firestore
                     .collection('users')
                     .doc(widget.userId)
                     .collection('store')
                     .doc('userstore')
                     .collection('products')
-                    .doc(product['id']); // Using the document id
+                    .doc(product['id']);
 
-                // Update the product in Firestore
                 await productRef.update({
                   'name': nameController.text,
                   'price': priceController.text,
                   'stock': stockController.text,
                 });
 
-                // Fetch products again to update the list
                 _fetchProducts();
 
-                // Clear form fields
                 nameController.clear();
                 priceController.clear();
                 stockController.clear();
@@ -199,7 +180,6 @@ class _StorePageState extends State<StorePage> {
       currentPage = pageName;
     });
 
-    // Handle navigation here
     if (pageName == 'ใบเสนอราคา') {
       Navigator.pushReplacement(
         context,
@@ -236,7 +216,7 @@ class _StorePageState extends State<StorePage> {
   @override
   void initState() {
     super.initState();
-    _fetchProducts(); // Fetch products when the page is initialized
+    _fetchProducts();
   }
 
   @override
@@ -248,9 +228,8 @@ class _StorePageState extends State<StorePage> {
         backgroundColor: const Color.fromARGB(255, 140, 93, 76),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.add, color: Colors.white),  // "+" symbol icon
+            icon: Icon(Icons.add, color: Colors.white),
             onPressed: () {
-              // Show a dialog to add a new product
               showDialog(
                 context: context,
                 builder: (context) {
@@ -310,7 +289,7 @@ class _StorePageState extends State<StorePage> {
             title: Text(product['name'] ?? 'No name'),
             subtitle: Text('Price: ${product['price']} | Stock: ${product['stock']}'),
             trailing: PopupMenuButton<String>(
-              icon: Icon(Icons.more_vert),  // Three-dot icon
+              icon: Icon(Icons.more_vert),
               onSelected: (String value) {
                 if (value == 'Edit') {
                   _editProduct(index);

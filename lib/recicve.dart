@@ -4,13 +4,13 @@ import 'package:real/preview.dart';
 import 'package:real/pay.dart';
 import 'package:real/store.dart';
 import 'package:real/setting.dart';
-import 'menu_bar.dart'; // Import Menu_Bar widget
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore package
+import 'menu_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'recieve_pdf.dart';
 
 class RecicvePage extends StatefulWidget {
   final String companyName;
-  final String userId; // Ensure userId is included
+  final String userId;
 
   const RecicvePage({super.key, required this.companyName, required this.userId});
 
@@ -23,7 +23,7 @@ class _RecicvePageState extends State<RecicvePage> {
     return FirebaseFirestore.instance
         .collection('users')
         .doc(widget.userId)
-        .collection('recieve') // Fetch approved quotations
+        .collection('recieve')
         .snapshots();
   }
 
@@ -34,7 +34,6 @@ class _RecicvePageState extends State<RecicvePage> {
       currentPage = pageName;
     });
 
-    // Handle navigation here
     if (pageName == 'ใบเสนอราคา') {
       Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => PreviewPage(companyName: widget.companyName, userId: widget.userId)),
@@ -67,7 +66,6 @@ class _RecicvePageState extends State<RecicvePage> {
     }
   }
 
-  // Function to delete the quotation from Firestore
   void _deleteQuotation(String quotationId) async {
     await FirebaseFirestore.instance
         .collection('users')
@@ -106,23 +104,23 @@ class _RecicvePageState extends State<RecicvePage> {
             itemCount: approvedQuotations.length,
             itemBuilder: (context, index) {
               var data = approvedQuotations[index].data() as Map<String, dynamic>;
-              var quotationId = approvedQuotations[index].id; // Get the quotation ID
+              var quotationId = approvedQuotations[index].id;
 
               return Container(
-                margin: EdgeInsets.all(8), // Space between the border and content
-                padding: EdgeInsets.all(8), // Padding inside the border
+                margin: EdgeInsets.all(8),
+                padding: EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: Colors.grey, // Border color
-                    width: 1, // Border width
+                    color: Colors.grey,
+                    width: 1, 
                   ),
-                  borderRadius: BorderRadius.circular(8), // Optional: rounded corners
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Align the items in the row
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
                           child: Column(
@@ -130,16 +128,16 @@ class _RecicvePageState extends State<RecicvePage> {
                             children: [
                               Text('${data['quotationNumber']}'),
                               Text('ลูกค้า: ${data['customerName']}'),
-                              SizedBox(height: 4), // Adds some space between the texts
+                              SizedBox(height: 4),
                               Text('ยอดเงินทั้งหมด: ${data['totalAmount']} บาท', style: TextStyle(fontWeight: FontWeight.bold)),
                             ],
                           ),
                         ),
                         PopupMenuButton<String>(
-                          icon: Icon(Icons.more_vert), // Three-dot icon
+                          icon: Icon(Icons.more_vert),
                           onSelected: (value) {
                             if (value == 'preview') {
-                              // Navigate to Preview Document Page with the necessary parameters
+                              
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -153,12 +151,12 @@ class _RecicvePageState extends State<RecicvePage> {
                                     discountBaht: data['discountBaht'] ?? 0,
                                     vat: data['VAT'] ?? 0,
                                     selectedProducts: List<Map<String, dynamic>>.from(data['selectedProducts'] ?? []),
-                                    isInvoice: data['isInvoice'] ?? false, // Determine if it's an invoice
+                                    isInvoice: data['isInvoice'] ?? false,
                                   ),
                                 ),
                               );
                             } else if (value == 'delete') {
-                              // Call delete function
+                              
                               _deleteQuotation(quotationId);
                             }
                           },

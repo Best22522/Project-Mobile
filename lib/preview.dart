@@ -5,7 +5,7 @@ import 'package:real/recicve.dart';
 import 'package:real/pay.dart';
 import 'package:real/store.dart';
 import 'package:real/setting.dart';
-import 'menu_bar.dart'; // Import Menu_Bar widget
+import 'menu_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'ProductSelect.dart';
 import 'preview_pdf.dart';
@@ -88,7 +88,6 @@ class _PreviewPageState extends State<PreviewPage> {
 }
 
   void _editQuotation(QueryDocumentSnapshot quotation) {
-  // You can navigate to an editing screen or show a modal with the form pre-filled with the quotation data
   print('Editing QT: ${quotation['quotationNumber']}');
   
   // Pass the discount field along with other fields
@@ -98,10 +97,10 @@ class _PreviewPageState extends State<PreviewPage> {
     builder: (BuildContext context) {
       return _QuotationForm(
         userId: widget.userId,
-        quotation: quotation,  // Pass the quotation data to the form for editing
-        discountBaht: quotation['discountBaht'] ?? 0.00,  // Pass the discount value in Baht
-        discount: quotation['discount'] ?? 0.00,  // Pass the discount value
-        vat: quotation['VAT'] ?? 0.00, // Pass the VAT value
+        quotation: quotation, 
+        discountBaht: quotation['discountBaht'] ?? 0.00, 
+        discount: quotation['discount'] ?? 0.00, 
+        vat: quotation['VAT'] ?? 0.00, 
         companyName: widget.companyName,
       );
     },
@@ -166,33 +165,33 @@ void _deleteQuotation(String quotationId) async {
               String quotationNumber = quotation['quotationNumber'];
               String customerName = quotation['customerName'];
               double totalAmount = quotation['totalAmount'];
-              String status = "รออนุมัติ"; // Add your status logic here
+              String status = "รออนุมัติ";
 
               return Container(
-  margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8), // Adds spacing around each item
+  margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8), 
   decoration: BoxDecoration(
-    border: Border.all(color: Colors.grey, width: 1), // Adds border
-    borderRadius: BorderRadius.circular(8), // Rounded corners
-    color: Colors.white, // Background color
+    border: Border.all(color: Colors.grey, width: 1), 
+    borderRadius: BorderRadius.circular(8),
+    color: Colors.white, 
     boxShadow: [
       BoxShadow(
         color: Colors.black12,
         blurRadius: 4,
-        offset: Offset(2, 2), // Adds slight shadow effect
+        offset: Offset(2, 2), 
       ),
     ],
   ),
   child: ListTile(
-    contentPadding: EdgeInsets.all(8), // Adds padding inside the box
+    contentPadding: EdgeInsets.all(8),
     title: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '$quotationNumber',  // QT is above
+          '$quotationNumber', 
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         Text(
-          '$customerName',  // Name below QT
+          '$customerName',  
           style: TextStyle(color: const Color.fromARGB(255, 18, 18, 18)),
         ),
       ],
@@ -206,9 +205,9 @@ void _deleteQuotation(String quotationId) async {
           icon: Icon(Icons.more_vert, color: Colors.blue),
           onSelected: (String value) {
             if (value == 'edit') {
-              _editQuotation(quotation);  // Add edit functionality
+              _editQuotation(quotation); 
             } else if (value == 'delete') {
-              _deleteQuotation(quotation.id);  // Add delete functionality
+              _deleteQuotation(quotation.id); 
             }
           },
           itemBuilder: (BuildContext context) {
@@ -224,7 +223,6 @@ void _deleteQuotation(String quotationId) async {
       ],
     ),
     onTap: () {
-      // You can add functionality to preview or edit the quotation
       print('Previewing QT: $quotationNumber');
     },
   ),
@@ -241,10 +239,10 @@ void _deleteQuotation(String quotationId) async {
 class _QuotationForm extends StatefulWidget {
   final String userId;
   final QueryDocumentSnapshot? quotation;
-  final double discount;  // Add the discount field here
-  final double discountBaht; // Add the discount in Baht field here
+  final double discount;
+  final double discountBaht; 
   final String companyName;
-  final double vat; // Add the VAT field here
+  final double vat; 
   
 
   const _QuotationForm({
@@ -252,7 +250,7 @@ class _QuotationForm extends StatefulWidget {
     required this.userId,
     this.quotation,
     required this.discount, 
-    required this.discountBaht,  // Include discount in the constructor
+    required this.discountBaht,
     required this.vat,
     required this.companyName,
   }) : super(key: key);
@@ -269,14 +267,14 @@ class _QuotationFormState extends State<_QuotationForm> {
   final TextEditingController _vatController = TextEditingController();
 
   double totalAmount = 0.00;
-  double discount = 0.00;  // This will hold the discount value
+  double discount = 0.00;
   String quotationNumber = "";
-  double discountBaht = 0.00; // Total amount in Baht
-  String _status = 'รออนุมัติ'; // Default status
-  double vat = 0.00; // VAT value
+  double discountBaht = 0.00;
+  String _status = 'รออนุมัติ';
+  double vat = 0.00;
 
 
-  List<Map<String, dynamic>> selectedProducts = []; // List of selected products
+  List<Map<String, dynamic>> selectedProducts = [];
 
   @override
   void initState() {
@@ -289,13 +287,13 @@ class _QuotationFormState extends State<_QuotationForm> {
       selectedProducts = widget.quotation!['selectedProducts'] is List
           ? List<Map<String, dynamic>>.from(widget.quotation!['selectedProducts'])
           : [];
-      discountBaht = widget.quotation!['discountBaht'] ?? 0.00; // Initialize the discount in Baht
-      _discountBahtController.text = discountBaht.toStringAsFixed(2); // Pre-fill the discount in Baht input field
-      // Initialize the discount controller with the passed discount value
+      discountBaht = widget.quotation!['discountBaht'] ?? 0.00;
+      _discountBahtController.text = discountBaht.toStringAsFixed(2);
+
       discount = widget.discount;
-      _discountController.text = discount.toStringAsFixed(2);  // Pre-fill the discount input field
+      _discountController.text = discount.toStringAsFixed(2);
       vat = widget.vat;
-      _vatController.text = vat.toStringAsFixed(2); // Pre-fill the VAT input field
+      _vatController.text = vat.toStringAsFixed(2);
     } else {
       _generateQuotationNumber().then((value) {
         setState(() {
@@ -314,7 +312,6 @@ class _QuotationFormState extends State<_QuotationForm> {
         .doc(widget.userId)
         .collection('preview');
 
-    // Query to get the most recent quotation for today
     var querySnapshot = await collectionRef
         .where('quotationNumber', isGreaterThanOrEqualTo: 'QT$formattedDate' + '0001')
         .where('quotationNumber', isLessThanOrEqualTo: 'QT$formattedDate' + '9999')
@@ -322,9 +319,8 @@ class _QuotationFormState extends State<_QuotationForm> {
         .limit(1)
         .get();
 
-    int nextNumber = 1;  // Default to 0001 if no quotations for today
+    int nextNumber = 1;
 
-    // If there are quotations for today, we increment the last number
     if (querySnapshot.docs.isNotEmpty) {
       String lastQuotation = querySnapshot.docs.first['quotationNumber'];
       int lastNumber = int.parse(lastQuotation.substring(8, 12));  // Get the last number (after 'QTyyMMdd')
@@ -344,7 +340,7 @@ class _QuotationFormState extends State<_QuotationForm> {
     },
   );
 
-  print("Selected Product from Modal: $selectedProduct"); // Debugging
+  print("Selected Product from Modal: $selectedProduct");
 
   if (selectedProduct != null && selectedProduct.containsKey('product')) {
     final product = selectedProduct['product'];
@@ -362,8 +358,7 @@ class _QuotationFormState extends State<_QuotationForm> {
         totalAmount += price; // Update total amount
       });
 
-      // Handling the stock and decrementing it after product selection
-      int currentStock = int.tryParse(product['stock'].toString()) ?? 0; // Convert stock from string to int
+      int currentStock = int.tryParse(product['stock'].toString()) ?? 0;
       if (currentStock > 0) {
         FirebaseFirestore.instance
             .collection('users')
@@ -381,11 +376,9 @@ class _QuotationFormState extends State<_QuotationForm> {
 }
 
 void _onCancel() {
-  // Check if any products are selected
   if (selectedProducts.isNotEmpty) {
     final lastSelectedProduct = selectedProducts.last;
 
-    // Make sure 'originalStock' is available before proceeding
     if (lastSelectedProduct != null && lastSelectedProduct.containsKey('originalStock')) {
       final productId = lastSelectedProduct['id'];
       final originalStock = int.tryParse(lastSelectedProduct['originalStock'].toString()) ?? 0;
@@ -416,7 +409,7 @@ void _onCancel() {
     }
   }
 
-  Navigator.pop(context); // Close the modal
+  Navigator.pop(context);
 }
 
   void _recalculateTotal() {
@@ -451,10 +444,10 @@ void _onCancel() {
         'quotationNumber': quotationNumber,
         'customerName': _customerNameController.text,
         'discount': discount,
-        'discountBaht': discountBaht, // Ensure this is updated before saving
+        'discountBaht': discountBaht,
         'totalAmount': totalAmount,
         'notes': _notesController.text,
-        'selectedProducts': selectedProducts,  // Save the selected products list
+        'selectedProducts': selectedProducts,
         'timestamp': FieldValue.serverTimestamp(),
         'VAT': vat,
       });
@@ -471,14 +464,14 @@ void _onCancel() {
     context,
     MaterialPageRoute(
       builder: (context) => PreviewQuotationPage(
-        companyName: widget.companyName, // Pass companyName
+        companyName: widget.companyName,
         quotationNumber: quotationNumber,
         customerName: _customerNameController.text,
         totalAmount: totalAmount,
-        selectedProducts: selectedProducts, // Pass the list of selected products
-        notes: _notesController.text, // Pass notes
-        discount: discount, // Pass the discount value
-        discountBaht: discountBaht, // Pass the discount in Baht value
+        selectedProducts: selectedProducts,
+        notes: _notesController.text,
+        discount: discount,
+        discountBaht: discountBaht,
         vat:vat,
       ),
     ),
@@ -555,7 +548,7 @@ void _approveQuotation(String quotationId, Map<String, dynamic> quotationData) {
     if (_status == 'อนุมัติ') {
       // Automatically close the form when status is changed to "อนุมัติ"
       _approveQuotation(widget.quotation!.id, widget.quotation!.data() as Map<String, dynamic>);
-      Navigator.pop(context); // Close the form when status is "อนุมัติ"
+      Navigator.pop(context);
     }
   },
 ),
@@ -584,8 +577,8 @@ void _approveQuotation(String quotationId, Map<String, dynamic> quotationData) {
     onPressed: () {
       setState(() {
         // Revert stock in Firestore before removing from selectedProducts
-        int currentStock = int.tryParse(product['stock'].toString()) ?? 0; // Get current stock
-        int originalStock = int.tryParse(product['originalStock'].toString()) ?? 0; // Get original stock
+        int currentStock = int.tryParse(product['stock'].toString()) ?? 0;
+        int originalStock = int.tryParse(product['originalStock'].toString()) ?? 0;
 
         // Revert stock: Increase it by 1
         int updatedStock = originalStock + 1;
@@ -598,7 +591,7 @@ void _approveQuotation(String quotationId, Map<String, dynamic> quotationData) {
           .doc('userstore')
           .collection('products')
           .doc(product['id'])
-          .update({'stock': updatedStock.toString()}) // Update stock in Firestore
+          .update({'stock': updatedStock.toString()})
           .then((_) {
             print("Stock updated for product ${product['name']}, new stock: $updatedStock");
           })

@@ -4,7 +4,7 @@ import 'package:real/preview.dart';
 import 'package:real/recicve.dart';     
 import 'package:real/store.dart';
 import 'package:real/setting.dart';
-import 'menu_bar.dart'; // Import Menu_Bar widget
+import 'menu_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
@@ -19,20 +19,16 @@ class PayPage extends StatefulWidget {
 }
 
 class _PayPageState extends State<PayPage> {
-  String currentPage = 'ค่าใช้จ่าย'; // Default page to display
+  String currentPage = 'ค่าใช้จ่าย';
 
-  // Controllers for text fields
   final TextEditingController nameController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
 
-  // Variable for selected date
   DateTime selectedDate = DateTime.now();
 
-  // List to store product information
   List<Map<String, dynamic>> products = [];
 
-  // Function to pick the date
   Future<void> _pickDate() async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -56,7 +52,6 @@ class _PayPageState extends State<PayPage> {
         .collection('pay')
         .doc('userpay');
 
-    // Fetch all transactions
     QuerySnapshot snapshot = await userDocRef.collection('transactions').get();
 
     setState(() {
@@ -67,7 +62,7 @@ class _PayPageState extends State<PayPage> {
           'price': data['price']?.toString() ?? '0',
           'note': data['note'] ?? '',
           'date': data['date'] ?? '',
-          'id': doc.id, // Add the document ID here
+          'id': doc.id,
         };
       }).toList();
     });
@@ -80,31 +75,29 @@ class _PayPageState extends State<PayPage> {
   @override
   void initState() {
     super.initState();
-    _fetchProducts(); // Fetch products when the page is initialized
+    _fetchProducts();
   }
 
 void _saveProduct() async {
   if (nameController.text.isNotEmpty && priceController.text.isNotEmpty) {
     try {
-      // Reference to Firestore
+
       FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-      // Reference to user's pay collection
       DocumentReference userDocRef = firestore
           .collection('users')
-          .doc(widget.userId) // User ID as document name
+          .doc(widget.userId)
           .collection('pay')
-          .doc('userpay'); // Single document to store all payments
+          .doc('userpay');
 
-      // Create subcollection inside 'userpay'
       CollectionReference payCollectionRef = userDocRef.collection('transactions');
 
-      // Add data to Firestore
+      // Add data
       await payCollectionRef.add({
         'name': nameController.text,
         'price': priceController.text,
         'note': noteController.text,
-        'date': selectedDate.toLocal().toString().split(' ')[0], // Format the date
+        'date': selectedDate.toLocal().toString().split(' ')[0],
         'timestamp': FieldValue.serverTimestamp(),
       });
 
@@ -175,7 +168,7 @@ void _editProduct(int index) async {
                   Text("วันที่: ${selectedDate.toLocal()}".split(' ')[0]),
                   IconButton(
                     icon: Icon(Icons.calendar_today),
-                    onPressed: _pickDate, // Pick date when pressed
+                    onPressed: _pickDate,
                   ),
                 ],
               ),
@@ -194,17 +187,15 @@ void _editProduct(int index) async {
             onPressed: () async {
               FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-              // Get the document ID for the product
-              String productId = product['id']; // Assuming you are passing the id in the 'id' field
+              String productId = product['id'];
 
-              // Update the product in Firestore using the productId
               DocumentReference productRef = firestore
                   .collection('users')
                   .doc(widget.userId)
                   .collection('pay')
                   .doc('userpay')
                   .collection('transactions')
-                  .doc(productId); // Use productId here
+                  .doc(productId);
 
               await productRef.update({
                 'name': nameController.text,
@@ -220,11 +211,10 @@ void _editProduct(int index) async {
                   'price': priceController.text,
                   'note': noteController.text,
                   'date': "${selectedDate.toLocal()}".split(' ')[0],
-                  'id': productId, // Ensure the id is stored here
+                  'id': productId,
                 };
               });
 
-              // Clear the fields after editing
               nameController.clear();
               priceController.clear();
               noteController.clear();
@@ -240,22 +230,18 @@ void _editProduct(int index) async {
   );
 }
 
-
-
-// Function to delete the product
 void _deleteProduct(int index) async {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   final product = products[index];
   
-  // Delete the product from Firestore
   DocumentReference productRef = firestore
       .collection('users')
       .doc(widget.userId)
       .collection('pay')
       .doc('userpay')
       .collection('transactions')
-      .doc(product['id']); // Assuming each product has an 'id'
+      .doc(product['id']);
 
   await productRef.delete();
 
@@ -264,8 +250,6 @@ void _deleteProduct(int index) async {
   });
 }
 
-
-  // Function to navigate to different pages
   void _navigateToPage(String pageName) {
     setState(() {
       currentPage = pageName;
@@ -350,7 +334,7 @@ void _deleteProduct(int index) async {
                               Text("วันที่: ${selectedDate.toLocal()}".split(' ')[0]),
                               IconButton(
                                 icon: Icon(Icons.calendar_today),
-                                onPressed: _pickDate, // Pick date when pressed
+                                onPressed: _pickDate,
                               ),
                             ],
                           ),
@@ -391,9 +375,9 @@ void _deleteProduct(int index) async {
               icon: Icon(Icons.more_vert),
               onSelected: (value) {
                 if (value == 'Edit') {
-                  _editProduct(index); // Edit the selected product
+                  _editProduct(index);
                 } else if (value == 'Delete') {
-                  _deleteProduct(index); // Delete the selected product
+                  _deleteProduct(index);
                 }
               },
               itemBuilder: (context) {

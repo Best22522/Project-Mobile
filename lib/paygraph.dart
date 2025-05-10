@@ -38,7 +38,7 @@ class _PayGraphState extends State<Paygraph> {
   // Function to determine whether to show the first 6 months or the last 6 months based on current month
   List<int> getMonthsToDisplay() {
     DateTime now = DateTime.now();
-    int currentMonth = now.month - 1;  // Zero-based month index
+    int currentMonth = now.month - 1;
 
     if (currentMonth < 6) {
       // If the current month is in the first 6 months, show the first 6 months
@@ -68,14 +68,13 @@ Future<Map<int, double>> _fetchMonthlyCollection() async {
   Map<int, double> monthlyData = {};
   double totalAmount = 0.0;
 
-  // Determine which months/days to show based on selectedMonths
   List<int> monthsToShow;
   if (selectedMonths == 12) {
     monthsToShow = List.generate(12, (index) => index);
   } else if (selectedMonths == 6) {
     monthsToShow = getMonthsToDisplay();
   } else if (selectedMonths == 1) {
-    monthsToShow = getDaysInCurrentMonth(); // Show days for the current month
+    monthsToShow = getDaysInCurrentMonth();
   } else if (selectedMonths == 3) {
     monthsToShow = getNext3Months(); // Show current month + next 2 months
   } else {
@@ -84,16 +83,14 @@ Future<Map<int, double>> _fetchMonthlyCollection() async {
 
   for (var doc in snapshot.docs) {
     var data = doc.data() as Map<String, dynamic>;
-    Timestamp timestamp = data['timestamp'];  // Assuming the timestamp field exists
+    Timestamp timestamp = data['timestamp'];
     double amount = double.tryParse(data['price'].toString()) ?? 0.0;
 
-    // Extract month, day, and year from timestamp
     DateTime date = timestamp.toDate();
-    int monthIndex = date.month - 1;  // Get the month index (0 = January, 1 = February, etc.)
-    int day = date.day;  // Get the day
-    String year = DateFormat('yyyy').format(date);  // Year
+    int monthIndex = date.month - 1;
+    int day = date.day;
+    String year = DateFormat('yyyy').format(date);
 
-    // Check if the data belongs to the selected months
     if (selectedMonths == 12 && year == DateFormat('yyyy').format(DateTime.now())) {
       monthlyData[monthIndex] = (monthlyData[monthIndex] ?? 0) + amount;
       totalAmount += amount;
@@ -109,11 +106,10 @@ Future<Map<int, double>> _fetchMonthlyCollection() async {
     }
   }
 
-  // If 12 months are selected, ensure that all months are represented (Jan-Dec)
   if (selectedMonths == 12) {
     Map<int, double> sortedMonthlyData = {};
     for (int i = 0; i < 12; i++) {
-      sortedMonthlyData[i] = monthlyData[i] ?? 0.0;  // Ensure every month has a value
+      sortedMonthlyData[i] = monthlyData[i] ?? 0.0; 
     }
     monthlyData = sortedMonthlyData;
   } else if (selectedMonths == 1) {
@@ -126,7 +122,6 @@ Future<Map<int, double>> _fetchMonthlyCollection() async {
     monthlyData = sortedDailyData;
   }
 
-  // Filter out months with zero data to avoid rendering them on the chart
   monthlyData = Map.fromEntries(monthlyData.entries.where((entry) => entry.value > 0));
 
   return monthlyData;
@@ -137,7 +132,6 @@ Future<Map<int, double>> _fetchMonthlyCollection() async {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Scrollable Month Selection at the Top
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           height: 70,
@@ -189,23 +183,22 @@ Future<Map<int, double>> _fetchMonthlyCollection() async {
                 "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
               ];
 
-              // Get the months/days to display based on selection
+
               List<int> monthsToDisplay;
 if (selectedMonths == 12) {
   monthsToDisplay = List.generate(12, (index) => index);
 } else if (selectedMonths == 6) {
   monthsToDisplay = getMonthsToDisplay();
 } else if (selectedMonths == 3) {
-  monthsToDisplay = getNext3Months();  // Properly use next 3 months
+  monthsToDisplay = getNext3Months();
 } else {
   monthsToDisplay = getDaysInCurrentMonth();
 }
 
 
-              // Sort the data based on months/days to display
               final sortedData = monthsToDisplay.map((index) {
   final label = selectedMonths == 1
-    ? "$index" // Use the day of the month for selectedMonths == 1
+    ? "$index" 
     : monthNames[index.clamp(0, 11)];
 
   final value = data[index] ?? 0.0;
@@ -271,12 +264,12 @@ if (selectedMonths == 12) {
     sideTitles: SideTitles(
       showTitles: true,
       getTitlesWidget: (double value, TitleMeta meta) {
-        // Adjust font size based on the selected month
+
         double fontSize = selectedMonths == 1 ? 5 : 10;
         return Text(
   selectedMonths == 1
       ? value.toInt().toString()
-      : monthNames[value.toInt().clamp(0, 11)], // Clamping to avoid index 12
+      : monthNames[value.toInt().clamp(0, 11)],
   style: TextStyle(fontSize: fontSize),
 );
       },

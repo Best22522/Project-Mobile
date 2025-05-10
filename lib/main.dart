@@ -1,12 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart'; // ติดไว้เฉยๆเผื่อใช้
 import 'loginPage.dart';
 import 'RegisterPage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
+  await Firebase.initializeApp(); // เชื่อมต่อ Firebase
   runApp(MyApp());
 }
 
@@ -83,7 +83,7 @@ class FirstPage extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 ),
                 onPressed: () {
-                  print('Navigating to LoginPage'); // Debug
+                  print('Navigating to LoginPage'); // Check
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => LoginPage()), //Link to Login Page

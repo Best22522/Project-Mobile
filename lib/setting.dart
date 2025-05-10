@@ -4,8 +4,8 @@ import 'package:real/preview.dart';
 import 'package:real/recicve.dart';
 import 'package:real/pay.dart';
 import 'package:real/store.dart';
-import 'menu_bar.dart'; // Import Menu_Bar widget
-import 'firstPage.dart' as first_page; // Import FirstPage for editing personal information with alias
+import 'menu_bar.dart'; 
+import 'firstPage.dart' as first_page; 
 import 'main.dart';
 
 
@@ -27,7 +27,6 @@ class _SettingPageState extends State<SettingPage> {
       currentPage = pageName;
     });
 
-    // Link to another page
     if (pageName == 'ใบเสนอราคา') {
       Navigator.pushReplacement(
         context,
@@ -71,7 +70,7 @@ void _editPersonalInfo() {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => first_page.FirstPage(userId: widget.userId), // Pass the userId from your context
+      builder: (context) => first_page.FirstPage(userId: widget.userId),
     ),
   );
 }
@@ -88,16 +87,15 @@ void _editPersonalInfo() {
             TextButton(
               child: Text('ยกเลิก'),
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text('ยืนยัน'),
               onPressed: () {
-                // Navigate to main.dart (replace with your main page)
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => MyApp()), // Navigate to the main page
+                  MaterialPageRoute(builder: (context) => MyApp()),
                 );
               },
             ),
@@ -135,7 +133,7 @@ void _editPersonalInfo() {
               leading: Icon(Icons.logout, color: Colors.blue),
               title: Text('ออกจากระบบ',
                   style: TextStyle(fontSize: 18)),
-              onTap: _showLogoutDialog, // Show confirmation dialog
+              onTap: _showLogoutDialog,
             ),
             Divider(),
           ],

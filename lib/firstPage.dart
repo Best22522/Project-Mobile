@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'homePage.dart';
 
 class FirstPage extends StatefulWidget {
-  final String userId; // Accept the userId parameter
+  final String userId;
 
   const FirstPage({super.key, required this.userId});
 
@@ -21,7 +21,7 @@ class _FirstPageState extends State<FirstPage> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _taxIdController = TextEditingController();
 
-  // Selections
+  // Selection
   String _selectedRole = '';
   String _selectedBusinessType = '';
   String _selectedVAT = '';
@@ -97,7 +97,6 @@ class _FirstPageState extends State<FirstPage> {
             ),
             SizedBox(height: 24),
 
-            // User Information Section
             _buildSectionTitle(Icons.person, 'ข้อมูลผู้สมัครใช้งาน'),
             buildTextField('ชื่อ', _nameController),
             buildTextField('นามสกุล', _surnameController),
@@ -105,7 +104,6 @@ class _FirstPageState extends State<FirstPage> {
 
             SizedBox(height: 16),
 
-            // Role Selection
             _buildSectionTitle(Icons.person, 'ตำเเหน่งของผู้สมัครใช้งาน'),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -118,7 +116,6 @@ class _FirstPageState extends State<FirstPage> {
 
             SizedBox(height: 24),
 
-            // Business Type Section
             _buildSectionTitle(Icons.insert_chart, 'เลือกประเภทธุรกิจ'),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -133,7 +130,6 @@ class _FirstPageState extends State<FirstPage> {
 
             SizedBox(height: 24),
 
-            // Business Information Section
             _buildSectionTitle(Icons.topic, 'ข้อมูลธุรกิจ'),
             buildTextField('ชื่อธุรกิจ', _companyNameController),
             buildTextField('เบอร์ติดต่อธุรกิจ(Optional)', _businessPhoneController),
@@ -154,7 +150,6 @@ class _FirstPageState extends State<FirstPage> {
 
             SizedBox(height: 24),
 
-            // Continue Button
             Center(
               child: ElevatedButton(
                 onPressed: _saveDataToFirestore,
@@ -175,7 +170,6 @@ class _FirstPageState extends State<FirstPage> {
   String userId = widget.userId;
   DocumentReference userDocRef = FirebaseFirestore.instance.collection('users').doc(userId);
 
-  // Create a sub-collection 'information' with a document 'business'
   userDocRef.collection('information').doc('business').set({
     'name': _nameController.text,
     'surname': _surnameController.text,
@@ -188,7 +182,6 @@ class _FirstPageState extends State<FirstPage> {
     'taxId': _taxIdController.text,
     //'VAT': _selectedVAT,
   }).then((value) {
-    // First, navigate to HomePage
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -203,9 +196,6 @@ class _FirstPageState extends State<FirstPage> {
   });
 }
 
-
-
-  // Helper Widgets
   Widget buildTextField(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -274,7 +264,7 @@ class _FirstPageState extends State<FirstPage> {
       child: OutlinedButton(
         onPressed: () {
           setState(() {
-            _selectedBusinessType = type; // Update the selected business type
+            _selectedBusinessType = type; // Update
           });
         },
         style: OutlinedButton.styleFrom(

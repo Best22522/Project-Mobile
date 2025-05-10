@@ -25,9 +25,9 @@ class _CombieGraphState extends State<CombieGraph> {
   return months.reversed.toList(); // Reversed to get them in chronological order
   }
 
-  List<int> getNext3Months() {
+  List<int> getNext3Months() { // Func to get next 3 months
   DateTime now = DateTime.now();
-  return List.generate(3, (i) => (now.month - 1 + i) % 12); // Ensure proper wrap-around
+  return List.generate(3, (i) => (now.month - 1 + i) % 12);
 }
 
   // Function to get the first N months
@@ -38,13 +38,12 @@ class _CombieGraphState extends State<CombieGraph> {
   // Function to determine whether to show the first 6 months or the last 6 months based on current month
   List<int> getMonthsToDisplay() {
     DateTime now = DateTime.now();
-    int currentMonth = now.month - 1;  // Zero-based month index
+    int currentMonth = now.month - 1;
 
     if (currentMonth < 6) {
       // If the current month is in the first 6 months, show the first 6 months
       return getFirstNMonths(6);
     } else {
-      // Otherwise, show the last 6 months
       return getLastNMonths(6);
     }
   }
@@ -122,7 +121,6 @@ Future<Map<String, Map<int, double>>> _fetchMonthlyCollection() async {
   processSnapshot(recieveSnapshot, recieveData, 'recieve');
   processSnapshot(paySnapshot, payData, 'pay');
 
-  // Ensure all expected entries exist
   if (selectedMonths == 12) {
     for (int i = 0; i < 12; i++) {
       recieveData[i] = recieveData[i] ?? 0.0;
@@ -146,7 +144,6 @@ Future<Map<String, Map<int, double>>> _fetchMonthlyCollection() async {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Scrollable Month Selection at the Top
         Container(
           padding: EdgeInsets.symmetric(vertical: 10),
           height: 70,

@@ -15,7 +15,7 @@ class PreviewDocumentPage extends StatelessWidget {
   final double discountBaht;
   final double vat;
   final List<Map<String, dynamic>> selectedProducts;
-  final bool isInvoice; // Flag to determine if it’s an invoice or quotation
+  final bool isInvoice; 
 
   const PreviewDocumentPage({
     Key? key,
@@ -28,7 +28,7 @@ class PreviewDocumentPage extends StatelessWidget {
     required this.discountBaht,
     required this.selectedProducts,
     required this.vat,
-    required this.isInvoice, // Add this flag
+    required this.isInvoice,
   }) : super(key: key);
 
   Future<Uint8List> _generatePdf() async {
@@ -42,7 +42,7 @@ class PreviewDocumentPage extends StatelessWidget {
         build: (pw.Context context) => pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            // Header Section
+
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
@@ -88,7 +88,6 @@ class PreviewDocumentPage extends StatelessWidget {
                 3: pw.FlexColumnWidth(1),
               },
               children: [
-                // Table Header
                 pw.TableRow(
                   decoration: pw.BoxDecoration(color: PdfColors.grey300),
                   children: [
@@ -114,7 +113,6 @@ class PreviewDocumentPage extends StatelessWidget {
                                 fontWeight: pw.FontWeight.bold, font: ttf))),
                   ],
                 ),
-                // Table Rows for Products
                 ...selectedProducts.asMap().entries.map((entry) {
                   final index = entry.key + 1;
                   final product = entry.value;
@@ -142,7 +140,6 @@ class PreviewDocumentPage extends StatelessWidget {
             ),
 
             pw.SizedBox(height: 345),
-
             // Discount Section
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.end,
@@ -234,10 +231,9 @@ class PreviewDocumentPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.download),
             onPressed: () async {
-              // Generate the PDF
+
               final pdfBytes = await _generatePdf();
 
-              // Trigger file download with specific filename
               await Printing.sharePdf(
                 bytes: pdfBytes,
                 filename: "$documentNumber-$customerName.pdf",

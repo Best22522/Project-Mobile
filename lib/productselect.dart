@@ -45,7 +45,7 @@ class _ProductSelectionModalState extends State<ProductSelectionModal> {
               ),
             )
           else
-            Center(child: Text("No product selected.")), // Optional fallback
+            Center(child: Text("No product selected.")),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
@@ -90,7 +90,7 @@ class _ProductSelectionModalState extends State<ProductSelectionModal> {
       };
     });
 
-    print("Selected Product: $selectedProduct"); // Debugging
+    print("Selected Product: $selectedProduct");
 
     Navigator.pop(context, {
       'product': selectedProduct,

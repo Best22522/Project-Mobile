@@ -169,12 +169,12 @@ class _HomePageState extends State<HomePage> {
                 CollectionGraph(userId: widget.userId),
                 Column(
                   children: [
-                    Expanded(child: Paygraph(userId: widget.userId)), // Graph inside the "ยอดชำระเงิน" tab
+                    Expanded(child: Paygraph(userId: widget.userId)),
                   ],
                 ),
                 Column(
                   children: [
-                    Expanded(child: CombieGraph(userId: widget.userId)), // Graph inside the "ยอดชำระเงิน" tab
+                    Expanded(child: CombieGraph(userId: widget.userId)),
                   ],
                 ),
               ],

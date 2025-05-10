@@ -24,7 +24,7 @@ void initState() {
   _loadRememberedLogin();
 }
 
-Future<void> _loadRememberedLogin() async {
+Future<void> _loadRememberedLogin() async { // ตัว remember
   SharedPreferences prefs = await SharedPreferences.getInstance();
   bool? rememberMe = prefs.getBool('rememberMe') ?? false;
 
@@ -32,9 +32,7 @@ Future<void> _loadRememberedLogin() async {
     String? savedEmail = prefs.getString('email');
     String? savedPassword = prefs.getString('password');
 
-    // Assuming email and password are stored, check if they exist and validate
     if (savedEmail != null && savedPassword != null) {
-      // You can now authenticate the user and navigate directly to the HomePage
       var result = await FirebaseFirestore.instance
           .collection('users')
           .where('email', isEqualTo: savedEmail)
@@ -46,11 +44,9 @@ Future<void> _loadRememberedLogin() async {
         DocumentReference userDocRef =
             FirebaseFirestore.instance.collection('users').doc(userDocumentId);
 
-        // Check if the user has a subcollection named 'information'
         var subCollection = await userDocRef.collection('information').get();
 
         if (subCollection.docs.isNotEmpty) {
-          // Redirect to HomePage if 'information' exists
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -58,7 +54,6 @@ Future<void> _loadRememberedLogin() async {
             ),
           );
         } else {
-          // Redirect to FirstPage if 'information' does not exist
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -70,7 +65,8 @@ Future<void> _loadRememberedLogin() async {
     }
   }
 }
-  Future<void> _storeLoginCredentials() async {
+
+  Future<void> _storeLoginCredentials() async { // ตัวกล่อง checkbox
   SharedPreferences prefs = await SharedPreferences.getInstance();
   if (_rememberMe) {
     prefs.setBool('rememberMe', _rememberMe);
@@ -83,7 +79,7 @@ Future<void> _loadRememberedLogin() async {
   }
 }
 
-  Future<void> _login() async {
+  Future<void> _login() async {  // login ธรรมดา
     String email = emailController.text.trim();
     String password = passwordController.text.trim();
 
@@ -106,14 +102,11 @@ Future<void> _loadRememberedLogin() async {
         DocumentReference userDocRef =
             FirebaseFirestore.instance.collection('users').doc(userDocumentId);
 
-        // Check if the user has a subcollection named 'information'
         var subCollection = await userDocRef.collection('information').get();
 
         if (subCollection.docs.isNotEmpty) {
-          // Store login credentials before redirecting
           await _storeLoginCredentials();
 
-          // Redirect to HomePage if 'information' exists
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -148,7 +141,6 @@ Future<void> _loadRememberedLogin() async {
   @override
 Widget build(BuildContext context) {
   return Scaffold(
-    // Remove backgroundColor here to allow gradient to show
     appBar: AppBar(
       elevation: 0,
       flexibleSpace: Container(

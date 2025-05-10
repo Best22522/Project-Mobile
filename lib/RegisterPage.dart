@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'loginPage.dart'; // Import the LoginPage.
+import 'loginPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -12,48 +12,44 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   bool isPasswordVisible = false;
   bool isConfirmPasswordVisible = false;
-  bool isEmailValid = false; // Flag to check if email is valid
-  bool doPasswordsMatch = false; // Flag to check if passwords match
+  bool isEmailValid = false;
+  bool doPasswordsMatch = false;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
   String errorMessage = '';
   
-  // Function to validate the email format
-  void validateEmail(String value) {
+  void validateEmail(String value) { //Check Email Format
     setState(() {
       isEmailValid = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$').hasMatch(value);
       if (isEmailValid) {
-        errorMessage = ''; // Clear error message if email is valid
+        errorMessage = '';
       } else {
-        errorMessage = 'กรุณากรอกอีเมลที่ถูกต้อง'; // Invalid email message
+        errorMessage = 'กรุณากรอกอีเมลที่ถูกต้อง';
       }
     });
   }
 
-  // Function to check if the passwords match
+  // Check password
   void validatePasswords() {
     setState(() {
       doPasswordsMatch = passwordController.text == confirmPasswordController.text;
     });
   }
 
-  // Function to check if email exists in Firestore
+  // Check ว่าซ้ำไหม
 Future<bool> emailExists(String email) async {
   try {
-    // Query the 'users' collection for a document with the same email
     var result = await FirebaseFirestore.instance
         .collection('users')
         .where('email', isEqualTo: email)
         .get();
 
-    // Debugging output to check the result of the query
     print("Number of documents found: ${result.docs.length}");
 
-    return result.docs.isNotEmpty; // If documents exist, email is already taken
+    return result.docs.isNotEmpty;
   } catch (e) {
-    // Handle any errors that occur during the query
     print('Error checking email: $e');
     return false;
   }
@@ -63,7 +59,6 @@ Future<bool> emailExists(String email) async {
 Widget build(BuildContext context) {
   return Stack(
     children: [
-      // Background gradient (under everything)
       Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -75,7 +70,7 @@ Widget build(BuildContext context) {
       ),
 
       Scaffold(
-        backgroundColor: Colors.transparent, // Transparent to let background show
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
           elevation: 0,
           flexibleSpace: Container(
@@ -242,11 +237,10 @@ Widget build(BuildContext context) {
   Future<void> _checkEmailAndRegister() async {
     FocusScope.of(context).unfocus();
 
-    // Check if the email already exists
     bool emailExistsFlag = await emailExists(emailController.text);
     if (emailExistsFlag) {
       setState(() {
-        errorMessage = 'อีเมลนี้ถูกใช้ไปแล้ว'; // Email already in use
+        errorMessage = 'อีเมลนี้ถูกใช้ไปแล้ว';
       });
       return;
     }
