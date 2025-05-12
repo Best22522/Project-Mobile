@@ -4,6 +4,7 @@ import 'package:real/preview.dart';
 import 'package:real/recicve.dart';
 import 'package:real/pay.dart';
 import 'package:real/store.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'menu_bar.dart'; 
 import 'firstPage.dart' as first_page; 
 import 'main.dart';
@@ -92,12 +93,20 @@ void _editPersonalInfo() {
             ),
             TextButton(
               child: Text('ยืนยัน'),
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => MyApp()),
-                );
-              },
+              onPressed: () async {
+  // Clear shared preferences (remembered login)
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.remove('rememberMe');
+  await prefs.remove('email');
+  await prefs.remove('password');
+
+  // Navigate to login screen
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(builder: (context) => MyApp()),
+  );
+},
+
             ),
           ],
         );

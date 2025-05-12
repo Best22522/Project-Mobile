@@ -305,7 +305,11 @@ Future<Map<String, Map<int, double>>> _fetchMonthlyCollection() async {
             child: Column(
               children: [
                 Text(
-                "รายรับรวม: ${totalRecieve.toStringAsFixed(2)} บาท | รายจ่ายรวม: ${totalPay.toStringAsFixed(2)} บาท",
+                "รายรับรวม: ${totalRecieve.toStringAsFixed(2)} บาท",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                "รายจ่ายรวม: ${totalPay.toStringAsFixed(2)} บาท",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ],

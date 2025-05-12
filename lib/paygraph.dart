@@ -205,7 +205,7 @@ if (selectedMonths == 12) {
   return BarChartGroupData(
     x: index,
     barRods: [
-      BarChartRodData(toY: value, color: const Color.fromARGB(255, 250, 14, 234)),
+      BarChartRodData(toY: value, color: const Color.fromARGB(255, 22, 163, 86)),
     ],
   );
 }).toList();
